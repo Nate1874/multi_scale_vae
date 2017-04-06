@@ -1,0 +1,5 @@
+.vscode/
+freyfaces.pkl
+MNIST/
+*.pyc
+freyface/
