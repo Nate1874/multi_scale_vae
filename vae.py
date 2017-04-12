@@ -126,9 +126,12 @@ class VAE(Generator):
         return tf.reduce_sum(0.5*(tf.square(mean)+
             tf.square(stddev)-2.0*tf.log(stddev+epsilon)-1.0))
 
-    def get_rec_loss(self, out_put, target_out, epsilon=1e-8):
-        return tf.reduce_sum(-target_out*tf.log(out_put+epsilon)
-            -(1.0-target_out)*tf.log(1.0-out_put+epsilon))
+    # def get_rec_loss(self, out_put, target_out, epsilon=1e-8):
+    #     return tf.reduce_sum(-target_out*tf.log(out_put+epsilon)
+    #         -(1.0-target_out)*tf.log(1.0-out_put+epsilon))
+    def get_rec_loss(self, out_put, target_out):
+        print(out_put.get_shape(),target_out.get_shape())
+        return tf.reduce_sum(tf.squared_difference(out_put, target_out))
     
     def save(self, step):
         print('---->saving', step)

@@ -18,7 +18,7 @@ flags.DEFINE_integer("updates_per_epoch", 1000, "number of updates per epoch")
 flags.DEFINE_integer("max_epoch", 200, "max epoch")
 flags.DEFINE_float("learning_rate", 1e-2, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
-flags.DEFINE_integer("hidden_size", 1, "size of the hidden VAE unit")
+flags.DEFINE_integer("hidden_size", 3, "size of the hidden VAE unit")
 flags.DEFINE_integer("channel", 128, "size of initial channel in decoder")
 
 FLAGS = flags.FLAGS
@@ -41,7 +41,7 @@ if __name__ == "__main__":
        #     images = get_next_batch(Train_set, FLAGS.batch_size)
             loss_value, kl_loss, rec_loss = model.update_params(images, epoch*FLAGS.updates_per_epoch + i)
             training_loss += loss_value
-        #    print ("=============KL loss", kl_loss)
+       #     print ("=============KL loss", kl_loss)
      #       print ("==============rec loss", rec_loss)
         model.save(epoch)
         training_loss = training_loss/ (FLAGS.updates_per_epoch * FLAGS.batch_size)

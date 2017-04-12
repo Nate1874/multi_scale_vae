@@ -37,7 +37,7 @@ def decoder(input_sensor):
         normalizer_params={'scale': True})
  #   print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
-        output, 64, deconv_size, scope='deconv2', padding='VALID',
+        output, 64, deconv_size_first, scope='deconv2', padding='VALID',
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
   #  print(output.get_shape())
