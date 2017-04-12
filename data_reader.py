@@ -12,7 +12,7 @@ def load_data(dataset, path, ratio =0.9, seed =0):
 
 def load_data_freyface(path, ratio= 0.9, seed =0):
     print("loading data")
-    f= open(path+ '/freyface/freyfaces.pkl' , 'rb')
+    f= open(path+ '/tempspace/lcai/GAN/Data/celeba.h5' , 'rb')
     data = cPickle.load(f, encoding='latin1')
     data = np.array(data, dtype= 'f')
     f.close()
