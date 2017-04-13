@@ -64,8 +64,8 @@ class VAE(Generator):
             self.sample_out = decoder(test_sample)        
 
 
-        self.kl_loss = self.get_loss(new_mean,new_std)/self.batch_size
-        self.rec_loss = self.get_rec_loss(out_put, input_tensor)/self.batch_size
+        self.kl_loss = self.get_loss(new_mean,new_std)
+        self.rec_loss = self.get_rec_loss(out_put, input_tensor)
         total_loss = self.kl_loss + self.rec_loss
         summarys.append(tf.summary.scalar('/KL-loss', self.kl_loss))
         summarys.append(tf.summary.scalar('/Rec-loss', self.rec_loss))
@@ -75,7 +75,7 @@ class VAE(Generator):
 
         summarys.append(tf.summary.image('output', tf.reshape(out_put, [-1, self.height, self.width, 3 ]), max_outputs = 20))
         
-        self.train = tf.contrib.layers.optimize_loss(self.kl_loss, tf.contrib.framework.get_or_create_global_step(), 
+        self.train = tf.contrib.layers.optimize_loss(total_loss, tf.contrib.framework.get_or_create_global_step(), 
             learning_rate=self.learning_rate, optimizer='Adam', update_ops=[])
         self.sess = tf.Session()
         self.sess.run(tf.global_variables_initializer())
@@ -85,15 +85,16 @@ class VAE(Generator):
     
     def get_loss(self, mean, stddev, epsilon=1e-8):
         return tf.reduce_sum(0.5*(tf.square(mean)+
-            tf.square(stddev)-2.0*tf.log(stddev+epsilon)-1.0))
+            tf.square(stddev)-2.0*tf.log(stddev+epsilon)-1.0))/mean.shape.num_elements()
 
     # def get_rec_loss(self, out_put, target_out, epsilon=1e-8):
     #     return tf.reduce_sum(-target_out*tf.log(out_put+epsilon)
     #         -(1.0-target_out)*tf.log(1.0-out_put+epsilon))
 
     def get_rec_loss(self, out_put, target_out):
-            print(out_put.get_shape(),target_out.get_shape())
-            return tf.reduce_sum(tf.squared_difference(out_put, target_out))
+        print(out_put.get_shape(),target_out.get_shape())
+           # return tf.reduce_sum(tf.squared_difference(out_put, target_out))
+        return tf.losses.mean_squared_error(out_put, target_out)
 
     def save(self, step):
         print('---->saving', step)
