@@ -9,10 +9,10 @@ class VAE(Generator):
 
     def __init__(self, hidden_size, batch_size, learning_rate, channel):
         self.working_directory = '/tempspace/hyuan/VAE'
-        self.height = 64
-        self.width = 64                            
-        self.modeldir = './modeldir'
-        self.logdir = './logdir'
+        self.height = 32
+        self.width = 32                            
+        self.modeldir = './modeldir_cifar_3_512'
+        self.logdir = './logdir_cifar_3_512'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate

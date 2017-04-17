@@ -10,6 +10,7 @@ def load_data(dataset, path, ratio =0.9, seed =0):
         data_train, data_test = load_data_freyface(path, ratio, seed)
     return data_train, data_test
 
+
 def load_data_freyface(path, ratio= 0.9, seed =0):
     print("loading data")
     f= open(path+ '/tempspace/lcai/GAN/Data/celeba.h5' , 'rb')
