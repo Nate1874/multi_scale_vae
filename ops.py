@@ -27,6 +27,13 @@ def encoder(input_tensor, output_size):
     output = tf.contrib.layers.flatten(output)
     return tf.contrib.layers.fully_connected(output, output_size, activation_fn=None)
 
+
+def intermediate_decoder(input_tensor, hidden_size):
+    # from batch*channel to batch*channle*d*d or(batch*channle*4*d)
+
+
+
+
 def decoder(input_sensor):
 #    output = tf.expand_dims(input_sensor ,1)
 #    output = tf.expand_dims(output,1)

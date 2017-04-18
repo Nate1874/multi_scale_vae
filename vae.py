@@ -11,8 +11,8 @@ class VAE(Generator):
         self.working_directory = '/tempspace/hyuan/VAE'
         self.height = 32
         self.width = 32                            
-        self.modeldir = './modeldir_cifar_3_512'
-        self.logdir = './logdir_cifar_3_512'
+        self.modeldir = './modeldir'
+        self.logdir = './logdir'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
@@ -36,8 +36,16 @@ class VAE(Generator):
         summarys = []
         with tf.variable_scope('model') as scope:
         #    print(input_tensor.get_shape())
-            encode_out = encoder(input_tensor, self.hidden_size*4*self.channel)
+            encode_out = encoder(input_tensor, self.channel*2)
       #      print (encode_out.get_shape())
+            mean = encode_out[:,:self.channel]
+            stddev = tf.sqrt(tf.exp(encode_out[:,self.channel:]))
+            first_sample = tf.random_normal([self.batch_size,self.channel])
+            first_sample = first_sample*stddev + mean
+            intermediate_out = intermediate_decoder(first_sample, self.hidden_size)
+
+
+
             encode_out = tf.reshape(encode_out, [self.batch_size ,self.channel, 4*self.hidden_size])
          #   print (encode_out.get_shape())
             mean1 = encode_out[ :, : , :self.hidden_size] #10*128*d*1
