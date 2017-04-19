@@ -30,8 +30,16 @@ def encoder(input_tensor, output_size):
 
 def intermediate_decoder(input_tensor, hidden_size):
     # from batch*channel to batch*channle*d*d or(batch*channle*4*d)
-
-
+    output = tf.expand_dims(input_tensor, 1)
+    output = tf.expand_dims(output, 1)
+    output = tf.contrib.layers.conv2d_transpose(
+        output, 128, deconv_size_second, scope='inter1', padding = 'VALID',
+        activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
+        normalizer_params={'scale': True})    
+    output = tf.contrib.layers.conv2d(
+        output, 256, deconv_size_second, scope='inter2', stride =2, padding='SAME',
+        activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm,
+        normalizer_params={'scale': True}) 
 
 
 def decoder(input_sensor):
