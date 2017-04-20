@@ -28,18 +28,28 @@ def encoder(input_tensor, output_size):
     return tf.contrib.layers.fully_connected(output, output_size, activation_fn=None)
 
 
-def intermediate_decoder(input_tensor, hidden_size):
+def intermediate_decoder(input_tensor, batch,channel, hidden_size):
     # from batch*channel to batch*channle*d*d or(batch*channle*4*d)
     output = tf.expand_dims(input_tensor, 1)
     output = tf.expand_dims(output, 1)
+    print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
         output, 128, deconv_size_second, scope='inter1', padding = 'VALID',
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
-        normalizer_params={'scale': True})    
+        normalizer_params={'scale': True})
+    print(output.get_shape())    
     output = tf.contrib.layers.conv2d(
-        output, 256, deconv_size_second, scope='inter2', stride =2, padding='SAME',
+        output, 256, deconv_size_second, scope='inter2', stride =1, padding='SAME',
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm,
-        normalizer_params={'scale': True}) 
+        normalizer_params={'scale': True})
+    print(output.get_shape())
+    output = tf.transpose(output, perm=[0,3,1,2])
+    output = tf.reshape(output,[batch, channel, 3*3])
+    print(output.get_shape())
+    output = tf.contrib.layers.fully_connected(output, hidden_size*4, activation_fn=None )
+    print(output.get_shape())
+    return output
+
 
 
 def decoder(input_sensor):
@@ -54,17 +64,20 @@ def decoder(input_sensor):
     #     normalizer_params={'scale': True})
     print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
-        output, 128, deconv_size_second, scope='deconv2', stride = 2,
+        output, 128, deconv_size_second, scope='deconv1', stride = 2,
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
-
     output = tf.contrib.layers.conv2d_transpose(
-        output, 64, deconv_size_second, scope='deconv3', padding='VALID',
+        output, 64, deconv_size_second, scope='deconv2', padding='VALID',
+        activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
+        normalizer_params={'scale': True})    
+    output = tf.contrib.layers.conv2d_transpose(
+        output, 32, deconv_size, scope='deconv3', stride = 2,
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
     print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
-        output, 32, deconv_size, scope='deconv4', stride = 2,
+        output, 16, deconv_size, scope='deconv4', stride = 2,
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
     print(output.get_shape())

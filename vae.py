@@ -2,17 +2,17 @@ import os
 import tensorflow as tf
 import numpy as np
 import math
-from ops import encoder, decoder
+from ops import encoder, decoder, intermediate_decoder
 from generator import Generator
 
 class VAE(Generator):
 
     def __init__(self, hidden_size, batch_size, learning_rate, channel):
         self.working_directory = '/tempspace/hyuan/VAE'
-        self.height = 32
-        self.width = 32                            
-        self.modeldir = './modeldir'
-        self.logdir = './logdir'
+        self.height = 64
+        self.width = 64                            
+        self.modeldir = './modeldir_multi_celeba_3_256'
+        self.logdir = './logdir_multi_celeba_3_256'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
@@ -42,16 +42,16 @@ class VAE(Generator):
             stddev = tf.sqrt(tf.exp(encode_out[:,self.channel:]))
             first_sample = tf.random_normal([self.batch_size,self.channel])
             first_sample = first_sample*stddev + mean
-            intermediate_out = intermediate_decoder(first_sample, self.hidden_size)
+            intermediate_out = intermediate_decoder(first_sample, self.batch_size, self.channel,  self.hidden_size)
 
 
 
-            encode_out = tf.reshape(encode_out, [self.batch_size ,self.channel, 4*self.hidden_size])
+       #     encode_out = tf.reshape(encode_out, [self.batch_size ,self.channel, 4*self.hidden_size])
          #   print (encode_out.get_shape())
-            mean1 = encode_out[ :, : , :self.hidden_size] #10*128*d*1
-            stddev1 = tf.sqrt(tf.exp(encode_out[:,:,self.hidden_size:2*self.hidden_size]))
-            mean2 = encode_out[:,:,2*self.hidden_size:3*self.hidden_size]
-            stddev2 = tf.sqrt(tf.exp(encode_out[:,:,3*self.hidden_size:4*self.hidden_size]))
+            mean1 = intermediate_out[ :, : , :self.hidden_size] #10*128*d*1
+            stddev1 = tf.sqrt(tf.exp(intermediate_out[:,:,self.hidden_size:2*self.hidden_size]))
+            mean2 = intermediate_out[:,:,2*self.hidden_size:3*self.hidden_size]
+            stddev2 = tf.sqrt(tf.exp(intermediate_out[:,:,3*self.hidden_size:4*self.hidden_size]))
             new_mean= tf.expand_dims(mean1, -1) * tf.expand_dims(mean2, -2)
       #      print(new_mean.get_shape()) # 10 * 128 *3 * 3
             new_std = tf.expand_dims(stddev1, -1) *tf.expand_dims(stddev2, -2)
