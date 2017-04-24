@@ -11,8 +11,8 @@ class VAE(Generator):
         self.working_directory = '/tempspace/hyuan/VAE'
         self.height = 32
         self.width = 32                            
-        self.modeldir = './modeldir_cifar_5_512'
-        self.logdir = './logdir_cifar_5_512'
+        self.modeldir = './modeldir_cifar_3_128'
+        self.logdir = './logdir_cifar_3_128'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
@@ -57,9 +57,9 @@ class VAE(Generator):
             out_put = decoder(new_sample)
          #   print (out_put.get_shape())
         with tf.variable_scope("model", reuse=True) as scope:
-            test_sample= tf.random_normal([self.batch_size,self.channel, self.hidden_size*self.hidden_size])
+            test_sample= tf.random_normal([5*self.batch_size,self.channel, self.hidden_size*self.hidden_size])
           #  test_sample2 = tf.random_normal([self.batch_size,self.channel, 1, self.hidden_size])
-            test_sample = tf.reshape(test_sample, [self.batch_size, self.channel,self.hidden_size, self.hidden_size])
+            test_sample = tf.reshape(test_sample, [5*self.batch_size, self.channel,self.hidden_size, self.hidden_size])
             
             self.sample_out = decoder(test_sample)        
 
