@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 conv_size = 5
-deconv_size_first = 4
+deconv_size_first = 2
 deconv_size_second = 3
 deconv_size = 5
 
