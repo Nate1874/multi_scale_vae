@@ -34,12 +34,12 @@ def intermediate_decoder(input_tensor, batch,channel, hidden_size):
     output = tf.expand_dims(output, 1)
     print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
-        output, 128, deconv_size_second, scope='inter1', padding = 'VALID',
+        output, 64, deconv_size_second, scope='inter1', padding = 'VALID',
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
     print(output.get_shape())    
     output = tf.contrib.layers.conv2d(
-        output, 256, deconv_size_second, scope='inter2', stride =1, padding='SAME',
+        output, 128, deconv_size_second, scope='inter2', stride =1, padding='SAME',
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm,
         normalizer_params={'scale': True})
     print(output.get_shape())

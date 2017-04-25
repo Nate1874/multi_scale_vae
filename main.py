@@ -15,25 +15,25 @@ flags = tf.flags
 logging = tf.logging
 
 flags.DEFINE_integer("batch_size", 100, "batch size")
-flags.DEFINE_integer("updates_per_epoch", 2025, "number of updates per epoch")
-flags.DEFINE_integer("max_epoch", 1000, "max epoch")
+flags.DEFINE_integer("updates_per_epoch", 600, "number of updates per epoch")
+flags.DEFINE_integer("max_epoch", 2000, "max epoch")
 flags.DEFINE_float("learning_rate", 1e-4, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
 flags.DEFINE_integer("hidden_size", 3, "size of the hidden VAE unit")
-flags.DEFINE_integer("channel", 256, "size of initial channel in decoder")
+flags.DEFINE_integer("channel", 128, "size of initial channel in decoder")
  
 FLAGS = flags.FLAGS
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = '5'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '11'
     # data_directory = os.path.join(FLAGS.working_directory, "MNIST")
     # if not os.path.exists(data_directory):    
     #     os.makedirs(data_directory)
     # mnist = input_data.read_data_sets(data_directory, one_hot= True)
   #  Train_set , Test_set = load_data('freyface', FLAGS.working_directory, 0.9, 0)
     model = VAE(FLAGS.hidden_size, FLAGS.batch_size, FLAGS.learning_rate, FLAGS.channel)
-    data = celeba()
-   # data =cifar_reader()
+   # data = c
+    data =cifar_reader()
  #   images = data.next_batch(FLAGS.batch_size)
     for epoch in range(FLAGS.max_epoch):
         training_loss = 0.0
