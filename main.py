@@ -19,13 +19,13 @@ flags.DEFINE_integer("updates_per_epoch", 600, "number of updates per epoch")
 flags.DEFINE_integer("max_epoch", 2000, "max epoch")
 flags.DEFINE_float("learning_rate", 1e-4, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
-flags.DEFINE_integer("hidden_size", 3, "size of the hidden VAE unit")
+flags.DEFINE_integer("hidden_size", 5, "size of the hidden VAE unit")
 flags.DEFINE_integer("channel", 512, "size of initial channel in decoder")
  
 FLAGS = flags.FLAGS
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = '11'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '3'
     # data_directory = os.path.join(FLAGS.working_directory, "MNIST")
     # if not os.path.exists(data_directory):    
     #     os.makedirs(data_directory)

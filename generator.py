@@ -1,4 +1,5 @@
 import os
+
 from scipy.misc import imsave
 
 class Generator(object):
@@ -6,7 +7,7 @@ class Generator(object):
     def generate_and_save_images(self, nums, directory):
         imgs = self.sess.run(self.sample_out)
         for k in range(imgs.shape[0]):
-            imgs_folder = os.path.join(directory, 'imgs_cifar_3_512_multi')
+            imgs_folder = os.path.join(directory, 'imgs_cifar_5_512_multi')
             if not os.path.exists(imgs_folder):
                 os.makedirs(imgs_folder)
             
