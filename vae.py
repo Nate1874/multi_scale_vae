@@ -9,10 +9,10 @@ class VAE(Generator):
 
     def __init__(self, hidden_size, batch_size, learning_rate, channel):
         self.working_directory = '/tempspace/hyuan/VAE'
-        self.height = 64
-        self.width = 64                            
-        self.modeldir = './modeldir_cifar_3_256_multi'
-        self.logdir = './logdir_cifar_3_256_multi'
+        self.height = 32
+        self.width = 32                            
+        self.modeldir = './modeldir_cifar_3_512_multi'
+        self.logdir = './logdir_cifar_3_512_multi'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
@@ -65,11 +65,32 @@ class VAE(Generator):
             out_put = decoder(new_sample)
          #   print (out_put.get_shape())
         with tf.variable_scope("model", reuse=True) as scope:
-            test_sample= tf.random_normal([self.batch_size,self.channel, self.hidden_size*self.hidden_size])
+            test_sample= tf.random_normal([5*self.batch_size, self.channel])
+            print(test_sample.get_shape())
+            test_sample= intermediate_decoder(test_sample, 5*self.batch_size, self.channel, self.hidden_size)
+            print(test_sample.get_shape())
+            test_mean1 = test_sample[ :, : , :self.hidden_size] #10*128*d*1
+            test_stddev1 = tf.sqrt(tf.exp(test_sample[:,:,self.hidden_size:2*self.hidden_size]))
+            test_mean2 = test_sample[:,:,2*self.hidden_size:3*self.hidden_size]
+            test_stddev2 = tf.sqrt(tf.exp(test_sample[:,:,3*self.hidden_size:4*self.hidden_size]))     
+            test_new_mean= tf.expand_dims(test_mean1, -1) * tf.expand_dims(test_mean2, -2)
+      #      print(new_mean.get_shape()) # 10 * 128 *3 * 3
+            test_new_std = tf.expand_dims(test_stddev1, -1) *tf.expand_dims(test_stddev2, -2)
+            print(test_new_mean.get_shape())
+            print(test_new_std.get_shape())
+     #       print(new_std.get_shape())
+            test_new_mean = tf.reshape(test_new_mean, [5*self.batch_size, self.channel, self.hidden_size * self.hidden_size])
+            test_new_std = tf.reshape(test_new_std, [5*self.batch_size, self.channel, self.hidden_size * self.hidden_size])
+            test_epsilon = tf.random_normal([5*self.batch_size, self.channel, self.hidden_size*self.hidden_size])
+            test_new_sample = test_new_mean + test_epsilon*test_new_std
+            print(test_new_sample.get_shape())
+      ##      print(new_sample.get_shape())
+            test_new_sample = tf.reshape(test_new_sample,[5*self.batch_size, self.channel, self.hidden_size, self.hidden_size] )            
+            print(test_new_sample.get_shape())
           #  test_sample2 = tf.random_normal([self.batch_size,self.channel, 1, self.hidden_size])
-            test_sample = tf.reshape(test_sample, [self.batch_size, self.channel,self.hidden_size, self.hidden_size])
+          #  test_sample = tf.reshape(test_sample, [5*self.batch_size, self.channel,self.hidden_size, self.hidden_size])
             
-            self.sample_out = decoder(test_sample)        
+            self.sample_out = decoder(test_new_sample)        
 
 
         self.kl_loss = self.get_loss(new_mean,new_std)
