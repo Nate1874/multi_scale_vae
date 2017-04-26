@@ -11,8 +11,8 @@ class VAE(Generator):
         self.working_directory = '/tempspace/hyuan/VAE'
         self.height = 32
         self.width = 32                            
-        self.modeldir = './modeldir_cifar_3_128_reshape'
-        self.logdir = './logdir_cifar_3_128_reshape'
+        self.modeldir = './modeldir_cifar_3_128_reshape_U'
+        self.logdir = './logdir_cifar_3_128_reshape_U'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
@@ -35,15 +35,22 @@ class VAE(Generator):
     def build_network(self, name, input_tensor):
         summarys = []
         with tf.variable_scope('model') as scope:
-            encode_out = encoder(input_tensor, self.channel*self.hidden_size*self.hidden_size*2)
+            encode_out = encoder(input_tensor, self.channel*self.hidden_size*(self.hidden_size+2))
             print (encode_out.get_shape())
-            mean = encode_out[:,:self.channel*self.hidden_size*self.hidden_size]
-            stddev = tf.sqrt(tf.exp(encode_out[:,self.channel*self.hidden_size*self.hidden_size:]))
-            first_sample = tf.random_normal([self.batch_size,self.channel*self.hidden_size*self.hidden_size])
-            first_sample = first_sample*stddev + mean
+            encode_out = tf.reshape( encode_out, [self.batch_size, self.channel, self.hidden_size*(self.hidden_size+2)])
+            print (encode_out.get_shape())
+            mean = encode_out[:, :, :self.hidden_size*self.hidden_size]
+            print (mean.get_shape())
+            stddev1 = tf.sqrt(tf.exp(encode_out[:, : , self.hidden_size*self.hidden_size: self.hidden_size*self.hidden_size+ self.hidden_size]))
+            print (stddev1.get_shape())
+            stddev2 = tf.sqrt(tf.exp(encode_out[:, : , self.hidden_size*self.hidden_size+ self.hidden_size: self.hidden_size*self.hidden_size+ 2*self.hidden_size]))
+            print (stddev2.get_shape())
+            new_std = tf.expand_dims(stddev1, -1) *tf.expand_dims(stddev2, -2)
+            print (new_std.get_shape())
+            new_std = tf.reshape(new_std, [self.batch_size, self.channel, self.hidden_size*self.hidden_size])
+            first_sample = tf.random_normal([self.batch_size,self.channel,self.hidden_size*self.hidden_size])
+            first_sample = first_sample*new_std + mean
             print(first_sample.get_shape())
-            first_sample = tf.expand_dims(first_sample, -1)
-            first_sample = tf.expand_dims(first_sample, -1)
             first_sample = tf.reshape(first_sample, [self.batch_size, self.channel, self.hidden_size, self.hidden_size])
             out_put = decoder(first_sample)
          #   print (out_put.get_shape())
@@ -59,7 +66,7 @@ class VAE(Generator):
         # stddev2 = tf.reshape(stddev2,[self.batch_size*self.channel, self.hidden_size])
         # print (mean1.get_shape())
 
-        self.kl_loss = self.get_loss(mean,stddev) 
+        self.kl_loss = self.get_loss(mean,new_std) 
       #  kl_loss = self.get_loss(mean1, stddev1)+ 
         self.rec_loss = self.get_rec_loss(out_put, input_tensor)
         total_loss = self.kl_loss + self.rec_loss

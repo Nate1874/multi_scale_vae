@@ -25,7 +25,7 @@ flags.DEFINE_integer("channel", 128, "size of initial channel in decoder")
 FLAGS = flags.FLAGS
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '5'
     # data_directory = os.path.join(FLAGS.working_directory, "MNIST")
     # if not os.path.exists(data_directory):
     #     os.makedirs(data_directory)
