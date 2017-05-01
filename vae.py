@@ -9,10 +9,10 @@ class VAE(Generator):
 
     def __init__(self, hidden_size, batch_size, learning_rate, channel):
         self.working_directory = '/tempspace/hyuan/VAE'
-        self.height = 32
-        self.width = 32                            
-        self.modeldir = './modeldir_cifar_5_128'
-        self.logdir = './logdir_cifar_5_128'
+        self.height = 64
+        self.width = 64                            
+        self.modeldir = './modeldir_celeba_5_128'
+        self.logdir = './logdir_celeba_5_128'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
@@ -107,7 +107,11 @@ class VAE(Generator):
        # print('---->summarying', step)
         self.writer.add_summary(summary, step)
         return loss, kl_loss, rec_loss
+    
+   # def load
 
+
+   # def evaluate
 
 
 
