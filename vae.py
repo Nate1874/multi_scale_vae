@@ -11,8 +11,8 @@ class VAE(Generator):
         self.working_directory = '/tempspace/hyuan/VAE'
         self.height = 64
         self.width = 64                            
-        self.modeldir = './modeldir_celeba_5_128'
-        self.logdir = './logdir_celeba_5_128'
+        self.modeldir = './modeldir_celeba_3_64'
+        self.logdir = './logdir_celeba_3_64'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
