@@ -108,7 +108,8 @@ class VAE(Generator):
         self.writer.add_summary(summary, step)
         return loss, kl_loss, rec_loss
     
-   # def load
+    def reload(self, epoch):
+        
 
 
    # def evaluate
