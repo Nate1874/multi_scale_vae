@@ -5,6 +5,10 @@ deconv_size_first = 2
 deconv_size_second = 3
 deconv_size = 5
 
+
+
+log2pi = tf.constant(np.log(2*np.pi), tf.float32)
+
 def encoder(input_tensor, output_size): 
  #   output = tf.reshape(input_tensor, [-1, 28, 28, 1])
     print (input_tensor.get_shape())
@@ -59,3 +63,20 @@ def decoder(input_sensor):
         normalizer_params={'scale': True})
     print(output.get_shape())         
     return output
+
+
+
+def log_likelihood_gaussian(sample, mean, sigma):
+    '''
+    compute log(sample~Gaussian(mean, sigma^2))
+    '''
+    return -log2pi*tf.cast(sample.shape[1].value, tf.float32)/2 -\
+            tf.reduce_sum(tf.square((sample-mean)/sigma) + 2*tf.log(sigma), 1)/2
+
+def log_likelihood_prior(sample):
+    '''
+    compute log(sample~Gaussian(0, I))
+    '''
+    return -log2pi*tf.cast(sample.shape[1].value, tf.float32)/2 -\
+            tf.reduce_sum(tf.square(sample), 1)/2
+

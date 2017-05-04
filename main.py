@@ -18,10 +18,12 @@ logging = tf.logging
 flags.DEFINE_integer("batch_size", 100, "batch size")
 flags.DEFINE_integer("updates_per_epoch", 2025, "number of updates per epoch")
 flags.DEFINE_integer("max_epoch", 500, "max epoch")
+flags.DEFINE_integer("max_test_epoch", 100, "max  test epoch")
 flags.DEFINE_float("learning_rate", 1e-4, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
 flags.DEFINE_integer("hidden_size", 5, "size of the hidden VAE unit")
 flags.DEFINE_integer("channel", 128, "size of initial channel in decoder")
+flags.DEFINE_integer("checkpoint", 0, "number of epochs to be reloaded")
 
 FLAGS = flags.FLAGS
 
@@ -61,4 +63,11 @@ if __name__ == "__main__":
           print ("Loss %f" % training_loss)
           model.generate_and_save_images(FLAGS.batch_size, FLAGS.working_directory)
     elif args.action == 'test':
-      
+        model.reload(FLAGS.checkpoint)
+        test_images = data.next_test_batch(FLAGS.batch_size)
+        sum_ll = 0
+        for epoch in range(FLAGS.max_test_epoch):
+            sum_ll = sumll + model.evaluate(test_images)
+        sumll = sum_ll/ FLAGS.max_test_epoch
+        print("======================NLL: %d"% sum_ll)
+    

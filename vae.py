@@ -2,7 +2,7 @@ import os
 import tensorflow as tf
 import numpy as np
 import math
-from ops import encoder, decoder
+from ops import *
 from generator import Generator
 
 class VAE(Generator):
@@ -52,9 +52,13 @@ class VAE(Generator):
             new_std = tf.reshape(new_std, [self.batch_size, self.channel, self.hidden_size * self.hidden_size])
             epsilon = tf.random_normal([self.batch_size, self.channel, self.hidden_size*self.hidden_size])
             new_sample = new_mean + epsilon*new_std
+            self.latent_sample = new_sample
+            self.mean= new_mean
+            self.stddev = new_std
       ##      print(new_sample.get_shape())
             new_sample = tf.reshape(new_sample,[self.batch_size, self.channel, self.hidden_size, self.hidden_size] )
             out_put = decoder(new_sample)
+            self.out_put = out_put
          #   print (out_put.get_shape())
         with tf.variable_scope("model", reuse=True) as scope:
             test_sample= tf.random_normal([5*self.batch_size,self.channel, self.hidden_size*self.hidden_size])
@@ -80,6 +84,10 @@ class VAE(Generator):
         self.sess = tf.Session()
         self.sess.run(tf.global_variables_initializer())
         summary = tf.summary.merge(summarys)
+        self.lle = self.log_marginal_likelihood_estimate()
+
+
+
         return summary
 
     
@@ -109,12 +117,33 @@ class VAE(Generator):
         return loss, kl_loss, rec_loss
     
     def reload(self, epoch):
-        
-
-
+        checkpoint_path = os.path.join(
+            self.modeldir, 'model')
+        model_path = checkpoint_path +'-'+str(epoch)
+        if not os.path.exists(model_path+'.meta'):
+            print('------- no such checkpoint', model_path)
+            return       
+        self.saver.restore(self.sess, model_path)
    # def evaluate
+    def log_marginal_likelihood_estimate(self):
+        x_mean = tf.reshape(self.input_tensor, [self.batch_size, -1])
+        x_sample = tf.reshape(self.out_put, [self.btach_size,-1])
+        x_sigma = tf.multiply(1.0, tf.ones(x_mean.shape))
+        return log_likelihood_gaussian(x_sample, x_mean, x_sigma) +\
+                log_likelihood_prior(self.latent_sample) -\
+                log_likelihood_gaussian(self.latent_sample, self.mean, self.stddev)        
 
 
+
+    def evaluate(self, test_input):
+        sample_ll= []
+        for j in range (1000):
+            res= self.sess.run(self.lle,{self.input_tensor: test_input})
+            sample_ll.append(res)
+        sample_ll = np.array(sample_ll)
+        m = np.amax(sample_ll, axis=1, keepdims=True)
+        log_marginal_estimate = m + np.log(np.mean(np.exp(sample_ll - m), axis=1, keepdims=True))
+        return np.mean(log_marginal_estimate)
 
 
 
