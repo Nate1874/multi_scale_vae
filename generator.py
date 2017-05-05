@@ -12,4 +12,4 @@ class Generator(object):
         #    imgs[k]= (imgs[k] + 1)*127.5
             imsave(os.path.join(imgs_folder,'%d.png') % k,
                 imgs[k].reshape(self.height,self.width, 3))
- 
+  
