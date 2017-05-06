@@ -5,11 +5,11 @@ class Generator(object):
     
     def generate_and_save_images(self, nums, directory):
         imgs = self.sess.run(self.sample_out)
+        print(imgs.shape)
         for k in range(imgs.shape[0]):
-            imgs_folder = os.path.join(directory, 'imgs_celeba_5_128')
+            imgs_folder = os.path.join(directory, 'imgs_mnist')
             if not os.path.exists(imgs_folder):
                 os.makedirs(imgs_folder)
         #    imgs[k]= (imgs[k] + 1)*127.5
             imsave(os.path.join(imgs_folder,'%d.png') % k,
-                imgs[k].reshape(self.height,self.width, 3))
-  
+                imgs[k].reshape(self.height, self.width))

@@ -1,5 +1,5 @@
 import tensorflow as tf
-
+import numpy as np
 conv_size = 5
 deconv_size_first = 2
 deconv_size_second = 3
@@ -38,28 +38,28 @@ def decoder(input_sensor):
     output = tf.transpose(input_sensor, perm=[0, 2, 3 ,1])
     print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
-        output, 128, deconv_size_first, scope='deconv1', padding='VALID',
+        output, 64, deconv_size_second, scope='deconv1', padding='VALID',
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
     print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
-        output, 64, deconv_size_second, scope='deconv2', padding='VALID',
+        output, 32, deconv_size_second, scope='deconv2', padding='VALID',
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
     print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
-        output, 32, deconv_size, scope='deconv3', stride = 2,
+        output, 16, deconv_size, scope='deconv3', stride = 2,
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
     print(output.get_shape())
+    # output = tf.contrib.layers.conv2d_transpose(
+    #     output, 16, deconv_size, scope='deconv4', stride = 2,
+    #     activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
+    #     normalizer_params={'scale': True})
+    # print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
-        output, 16, deconv_size, scope='deconv4', stride = 2,
-        activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
-        normalizer_params={'scale': True})
-    print(output.get_shape())
-    output = tf.contrib.layers.conv2d_transpose(
-        output, 3, deconv_size, scope='deconv5', stride=2,
-        activation_fn=tf.nn.tanh, normalizer_fn=tf.contrib.layers.batch_norm, 
+        output, 1, deconv_size, scope='deconv5', stride=2,
+        activation_fn=tf.nn.sigmoid, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
     print(output.get_shape())         
     return output
@@ -70,13 +70,14 @@ def log_likelihood_gaussian(sample, mean, sigma):
     '''
     compute log(sample~Gaussian(mean, sigma^2))
     '''
-    return -log2pi*tf.cast(sample.shape[1].value, tf.float32)/2 -\
-            tf.reduce_sum(tf.square((sample-mean)/sigma) + 2*tf.log(sigma), 1)/2
+    return -log2pi*tf.cast(sample.shape[1].value, tf.float32)/2\
+        -tf.reduce_sum(tf.square((sample-mean)/sigma) + 2*tf.log(sigma), 1)/2
 
 def log_likelihood_prior(sample):
     '''
     compute log(sample~Gaussian(0, I))
     '''
-    return -log2pi*tf.cast(sample.shape[1].value, tf.float32)/2 -\
-            tf.reduce_sum(tf.square(sample), 1)/2
+  #  print(sample.shape)
+    return -log2pi*tf.cast(sample.shape[1].value, tf.float32)/2\
+         -tf.reduce_sum(tf.square(sample), 1)/2
 
