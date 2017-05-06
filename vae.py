@@ -11,8 +11,8 @@ class VAE(Generator):
         self.working_directory = '/tempspace/hyuan/VAE'
         self.height = 32
         self.width = 32                           
-        self.modeldir = './modeldir_cifar_new2_1_256'
-        self.logdir = './logdir_cifar_new2_1_256'
+        self.modeldir = './modeldir_cifar_test_5_128'
+        self.logdir = './logdir_cifar_test_5_128'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
@@ -38,25 +38,25 @@ class VAE(Generator):
         #    print(input_tensor.get_shape())
             encode_out = encoder(input_tensor, self.hidden_size*4*self.channel)
       #      print (encode_out.get_shape())
-# '''
-#             encode_out = tf.reshape(encode_out, [self.batch_size ,self.channel, 4*self.hidden_size])
-#          #   print (encode_out.get_shape())
-#             mean1 = encode_out[ :, : , :self.hidden_size] #10*128*d*1
-#             stddev1 = tf.sqrt(tf.exp(encode_out[:,:,self.hidden_size:2*self.hidden_size]))
-#             mean2 = encode_out[:,:,2*self.hidden_size:3*self.hidden_size]
-#             stddev2 = tf.sqrt(tf.exp(encode_out[:,:,3*self.hidden_size:4*self.hidden_size]))
+
+            encode_out = tf.reshape(encode_out, [self.batch_size ,self.channel, 4*self.hidden_size])
+         #   print (encode_out.get_shape())
+            mean1 = encode_out[ :, : , :self.hidden_size] #10*128*d*1
+            stddev1 = tf.sqrt(tf.exp(encode_out[:,:,self.hidden_size:2*self.hidden_size]))
+            mean2 = encode_out[:,:,2*self.hidden_size:3*self.hidden_size]
+            stddev2 = tf.sqrt(tf.exp(encode_out[:,:,3*self.hidden_size:4*self.hidden_size]))
 
 # '''
-            mean1 = encode_out[ :, :self.hidden_size*self.channel] #10*128*d*1
-            stddev1 = tf.sqrt(tf.exp(encode_out[:,self.hidden_size*self.channel:2*self.hidden_size*self.channel]))
-            mean2 = encode_out[:,2*self.hidden_size*self.channel:3*self.hidden_size*self.channel]
-            stddev2 = tf.sqrt(tf.exp(encode_out[:,3*self.hidden_size*self.channel:4*self.hidden_size*self.channel]))
-            print(mean1.get_shape(), mean2.get_shape(),stddev1.get_shape(),stddev2.get_shape())
+            # mean1 = encode_out[ :, :self.hidden_size*self.channel] #10*128*d*1
+            # stddev1 = tf.sqrt(tf.exp(encode_out[:,self.hidden_size*self.channel:2*self.hidden_size*self.channel]))
+            # mean2 = encode_out[:,2*self.hidden_size*self.channel:3*self.hidden_size*self.channel]
+            # stddev2 = tf.sqrt(tf.exp(encode_out[:,3*self.hidden_size*self.channel:4*self.hidden_size*self.channel]))
+            # print(mean1.get_shape(), mean2.get_shape(),stddev1.get_shape(),stddev2.get_shape())
 
-            mean1=tf.reshape(mean1,[self.batch_size, self.channel,self.hidden_size])
-            mean2=tf.reshape(mean2,[self.batch_size, self.channel,self.hidden_size])
-            stddev1=tf.reshape(stddev1,[self.batch_size, self.channel,self.hidden_size])
-            stddev2=tf.reshape(stddev2,[self.batch_size, self.channel,self.hidden_size])
+            # mean1=tf.reshape(mean1,[self.batch_size, self.channel,self.hidden_size])
+            # mean2=tf.reshape(mean2,[self.batch_size, self.channel,self.hidden_size])
+            # stddev1=tf.reshape(stddev1,[self.batch_size, self.channel,self.hidden_size])
+            # stddev2=tf.reshape(stddev2,[self.batch_size, self.channel,self.hidden_size])
             print(mean1.get_shape(), mean2.get_shape(),stddev1.get_shape(),stddev2.get_shape())
 
 
