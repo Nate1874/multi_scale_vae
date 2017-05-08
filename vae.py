@@ -9,10 +9,10 @@ class VAE(Generator):
 
     def __init__(self, hidden_size, batch_size, learning_rate, channel):
         self.working_directory = '/tempspace/hyuan/VAE'
-        self.height = 64
-        self.width = 64                           
-        self.modeldir = './modeldir_celeba_1_256_tran'
-        self.logdir = './logdir_celeba_1_256_tran'
+        self.height = 32
+        self.width = 32                           
+        self.modeldir = './modeldir_cifar_test_1_1152_tran'
+        self.logdir = './logdir_cifar_test_1_1152_tran'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
@@ -61,9 +61,9 @@ class VAE(Generator):
         summarys.append(tf.summary.scalar('/Rec-loss', self.rec_loss))
         summarys.append(tf.summary.scalar('/loss', total_loss))
 
-        summarys.append(tf.summary.image('input', tf.reshape(input_tensor, [-1, 64, 64, 3]), max_outputs = 20))
+        summarys.append(tf.summary.image('input', tf.reshape(input_tensor, [-1, 32, 32, 3]), max_outputs = 20))
 
-        summarys.append(tf.summary.image('output', tf.reshape(out_put, [-1, 64, 64, 3]), max_outputs = 20))
+        summarys.append(tf.summary.image('output', tf.reshape(out_put, [-1, 32, 32, 3]), max_outputs = 20))
         
         self.train = tf.contrib.layers.optimize_loss(total_loss, tf.contrib.framework.get_or_create_global_step(), 
             learning_rate=self.learning_rate, optimizer='Adam', update_ops=[])
