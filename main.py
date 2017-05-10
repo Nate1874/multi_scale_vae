@@ -29,7 +29,7 @@ flags.DEFINE_integer("checkpoint", 1999, "number of epochs to be reloaded")
 FLAGS = flags.FLAGS
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = '4'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '1'
     parser = argparse.ArgumentParser()
     parser.add_argument('--action', dest='action', type=str, default='train',
                         help='actions: train, or test')
@@ -79,7 +79,9 @@ if __name__ == "__main__":
         lls = []
         for sigma in sigmas:
             nlls =[]
+            print("sigma: ", sigma)
             for i in range(1, 10+1):
+            
             #    X, _ = mnist.test.next_batch(FLAGS.batch_size)
                 X = data.next_test_batch(FLAGS.batch_size)
                 nll = parzen_cpu_batch(X, samples, sigma=sigma, batch_size=FLAGS.batch_size, num_of_samples=10000, data_size=3072)
