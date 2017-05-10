@@ -66,7 +66,8 @@ class VAE(Generator):
           #  test_sample2 = tf.random_normal([self.batch_size,self.channel, 1, self.hidden_size])
             test_sample = tf.reshape(test_sample, [self.batch_size, self.channel,self.hidden_size, self.hidden_size])
             
-            self.sample_out = decoder(test_sample)        
+            self.sample_out = decoder(test_sample) 
+            self.sample_out = tf.reshape(self.sample_out, [self.batch_size, self.height*self.width])       
 
 
         self.kl_loss = self.get_loss(new_mean,new_std)
@@ -131,12 +132,12 @@ class VAE(Generator):
         x_mean = tf.reshape(self.input_tensor, [self.batch_size, self.width*self.height])
         x_sample = tf.reshape(self.out_put, [self.batch_size,self.width*self.height])
    #     print(x_mean.shape)
-        print(x_mean.get_shape())
+  #      print(x_mean.get_shape())
         x_sigma = tf.multiply(1.0, tf.ones(tf.shape(x_mean)))
-        print(x_sigma.get_shape())
-        print(self.latent_sample.shape)
-        print(self.mean.shape)
-        print(self.stddev.shape)
+   #     print(x_sigma.get_shape())
+  #      print(self.latent_sample.shape)
+  #      print(self.mean.shape)
+ #       print(self.stddev.shape)
         return log_likelihood_gaussian(x_mean, x_sample, x_sigma)+\
                 log_likelihood_prior(self.latent_sample)-\
                 log_likelihood_gaussian(self.latent_sample, self.mean, self.stddev)        
@@ -153,7 +154,18 @@ class VAE(Generator):
         log_marginal_estimate = m + np.log(np.mean(np.exp(sample_ll - m), axis=1, keepdims=True))
         return np.mean(log_marginal_estimate)
 
+    
 
+    def generate_samples(self):
+        samples = []
+        for i in range(100): # generate 100*100 samples
+            samples.extend(self.sess.run(self.sample_out))
+        samples = np.array(samples)
+        print (samples.shape)
+        return samples
+
+
+    
 
         
 

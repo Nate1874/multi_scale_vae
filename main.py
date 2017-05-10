@@ -12,6 +12,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 from data_reader import load_data, get_next_batch
 from celeba import celeba
 from cifar_reader import cifar_reader
+from ops import *
 flags = tf.flags
 logging = tf.logging
 
@@ -19,7 +20,7 @@ flags.DEFINE_integer("batch_size", 100, "batch size")
 flags.DEFINE_integer("updates_per_epoch", 550, "number of updates per epoch")
 flags.DEFINE_integer("max_epoch", 100, "max epoch")
 flags.DEFINE_integer("max_test_epoch", 100, "max  test epoch")
-flags.DEFINE_float("learning_rate", 1e-3, "learning rate")
+flags.DEFINE_float("learning_rate", 1e-2, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
 flags.DEFINE_integer("hidden_size", 3, "size of the hidden VAE unit")
 flags.DEFINE_integer("channel", 128, "size of initial channel in decoder")
@@ -28,7 +29,7 @@ flags.DEFINE_integer("checkpoint", 99, "number of epochs to be reloaded")
 FLAGS = flags.FLAGS
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = '11'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     parser = argparse.ArgumentParser()
     parser.add_argument('--action', dest='action', type=str, default='train',
                         help='actions: train, or test')
@@ -66,11 +67,36 @@ if __name__ == "__main__":
     elif args.action == 'test':
         model.reload(FLAGS.checkpoint)
 
-        sum_ll = 0
-        for epoch in range(FLAGS.max_test_epoch):
-            test_images, _ = mnist.test.next_batch(FLAGS.batch_size)
-            sum_ll = sum_ll + model.evaluate(test_images)
-            print("current sum ll ================", sum_ll)
-        sum_ll = sum_ll/ FLAGS.max_test_epoch
-        print("======================NLL: %d"% sum_ll)
+        # sum_ll = 0
+        # for epoch in range(FLAGS.max_test_epoch):
+        #     test_images, _ = mnist.test.next_batch(FLAGS.batch_size)
+        #     sum_ll = sum_ll + model.evaluate(test_images)
+        #     print("current sum ll ================", sum_ll)
+        # sum_ll = sum_ll/ FLAGS.max_test_epoch
+        # print("======================NLL: %d"% sum_ll)
+        samples= model.generate_samples()
+        sigmas = np.logspace(-1.0, 0.0, 10)
+        lls = []
+        for sigma in sigmas:
+            nlls =[]
+            for i in range(1, 10+1):
+                X, _ = mnist.test.next_batch(FLAGS.batch_size)
+                nll = parzen_cpu_batch(X, samples, sigma=sigma, batch_size=FLAGS.batch_size, num_of_samples=10000, data_size=784)
+                nlls.extend(nll)
+            nlls = np.array(nlls).reshape(1000) # 1000 valid images
+            print("sigma: ", sigma)
+            print("ll: %d" % (np.mean(nlls)))
+            lls.append(np.mean(nlls))
+        sigma = sigmas[np.argmax(lls)]           
+
+        nlls = []
+        for i in range(1,100+1): # number of test batches = 100
+            X, _ = mnist.test.next_batch(FLAGS.batch_size)
+            nll = parzen_cpu_batch(X, samples, sigma=sigma, batch_size=FLAGS.batch_size, num_of_samples=10000, data_size=784)
+            nlls.extend(nll)
+        
+        nlls = np.array(nlls).reshape(10000) # 10000 test images
+        print("sigma: ", sigma)
+        print("ll: %d" % (np.mean(nlls)))
+        print("se: %d" % (nlls.std() / np.sqrt(10000)))         
     
