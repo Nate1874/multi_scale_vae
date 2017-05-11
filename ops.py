@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 
 conv_size = 5
 deconv_size_first = 2
