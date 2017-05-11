@@ -73,9 +73,9 @@ class VAE(Generator):
             out_put = decoder(new_sample)
          #   print (out_put.get_shape())
         with tf.variable_scope("model", reuse=True) as scope:
-            test_sample= tf.random_normal([5*self.batch_size,self.channel, self.hidden_size*self.hidden_size])
+            test_sample= tf.random_normal([self.batch_size,self.channel, self.hidden_size*self.hidden_size])
           #  test_sample2 = tf.random_normal([self.batch_size,self.channel, 1, self.hidden_size])
-            test_sample = tf.reshape(test_sample, [5*self.batch_size, self.channel,self.hidden_size, self.hidden_size])
+            test_sample = tf.reshape(test_sample, [self.batch_size, self.channel,self.hidden_size, self.hidden_size])
             
             self.sample_out = decoder(test_sample)        
 
@@ -129,7 +129,51 @@ class VAE(Generator):
 
    # def evaluate
 
+    def reload(self, epoch):
+        checkpoint_path = os.path.join(
+            self.modeldir, 'model')
+        model_path = checkpoint_path +'-'+str(epoch)
+        if not os.path.exists(model_path+'.meta'):
+            print('------- no such checkpoint', model_path)
+            return       
+        self.saver.restore(self.sess, model_path)
+        print("model load successfully===================")
+   # def evaluate
+    def log_marginal_likelihood_estimate(self):
+        x_mean = tf.reshape(self.input_tensor, [self.batch_size, self.width*self.height])
+        x_sample = tf.reshape(self.out_put, [self.batch_size,self.width*self.height])
+   #     print(x_mean.shape)
+  #      print(x_mean.get_shape())
+        x_sigma = tf.multiply(1.0, tf.ones(tf.shape(x_mean)))
+   #     print(x_sigma.get_shape())
+  #      print(self.latent_sample.shape)
+  #      print(self.mean.shape)
+ #       print(self.stddev.shape)
+        return log_likelihood_gaussian(x_mean, x_sample, x_sigma)+\
+                log_likelihood_prior(self.latent_sample)-\
+                log_likelihood_gaussian(self.latent_sample, self.mean, self.stddev)        
 
+
+
+    def evaluate(self, test_input):
+        sample_ll= []
+        for j in range (1000):
+            res= self.sess.run(self.lle,{self.input_tensor: test_input})
+            sample_ll.append(res)
+        sample_ll = np.array(sample_ll)
+        m = np.amax(sample_ll, axis=1, keepdims=True)
+        log_marginal_estimate = m + np.log(np.mean(np.exp(sample_ll - m), axis=1, keepdims=True))
+        return np.mean(log_marginal_estimate)
+
+    
+
+    def generate_samples(self):
+        samples = []
+        for i in range(100): # generate 100*100 samples
+            samples.extend(self.sess.run(self.sample_out))
+        samples = np.array(samples)
+        print (samples.shape)
+        return samples
 
 
 
