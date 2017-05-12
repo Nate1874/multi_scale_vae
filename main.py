@@ -29,7 +29,7 @@ flags.DEFINE_integer("checkpoint", 499, "number of epochs to be reloaded")
 FLAGS = flags.FLAGS
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = '7'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '8'
     parser = argparse.ArgumentParser()
     parser.add_argument('--action', dest='action', type=str, default='train',
                         help='actions: train, or test')
