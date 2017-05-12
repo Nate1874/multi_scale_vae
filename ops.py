@@ -9,21 +9,22 @@ deconv_size = 5
 
 def encoder(input_tensor, output_size): 
  #   output = tf.reshape(input_tensor, [-1, , 28, 1])
+    print(input_tensor.get_shape())
     output = tf.contrib.layers.conv2d(
         input_tensor, 32, conv_size, scope='convlayer1', stride =2, 
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm,
         normalizer_params={'scale': True})
- #   print(output.get_shape())
+    print(output.get_shape())
     output = tf.contrib.layers.conv2d(
         output, 64, conv_size, scope='convlayer2', stride =2, 
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm,
         normalizer_params={'scale': True})
-#    print(output.get_shape())s
+    print(output.get_shape())
     output = tf.contrib.layers.conv2d(
         output, 128, conv_size, scope='convlayer3', stride =2, padding='VALID',
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm,
         normalizer_params={'scale': True}) 
-#    print(output.get_shape())   
+    print(output.get_shape())   
     output = tf.contrib.layers.dropout(output, 0.9, scope='dropout1')
     output = tf.contrib.layers.flatten(output)
     return tf.contrib.layers.fully_connected(output, output_size, activation_fn=None)
