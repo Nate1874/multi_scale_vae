@@ -38,12 +38,12 @@ def decoder(input_sensor):
     output = tf.transpose(input_sensor, perm=[0, 2, 3 ,1])
     print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
-        output, 64, deconv_size_second, scope='deconv1', padding='VALID',
+        output, 32, deconv_size_second, scope='deconv1', padding='VALID',
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
     print(output.get_shape())
     output = tf.contrib.layers.conv2d_transpose(
-        output, 32, deconv_size_second, scope='deconv2', padding='VALID',
+        output, 16, deconv_size_second, scope='deconv2', padding='VALID',
         activation_fn=tf.nn.elu, normalizer_fn=tf.contrib.layers.batch_norm, 
         normalizer_params={'scale': True})
     print(output.get_shape())

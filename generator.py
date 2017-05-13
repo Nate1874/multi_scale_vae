@@ -7,7 +7,7 @@ class Generator(object):
         imgs = self.sess.run(self.sample_out)
         print(imgs.shape)
         for k in range(imgs.shape[0]):
-            imgs_folder = os.path.join(directory, 'imgs_mnist')
+            imgs_folder = os.path.join(directory, 'imgs_mnist_32_3')
             if not os.path.exists(imgs_folder):
                 os.makedirs(imgs_folder)
         #    imgs[k]= (imgs[k] + 1)*127.5

@@ -11,8 +11,8 @@ class VAE(Generator):
         self.working_directory = '/tempspace/hyuan/VAE'
         self.height = 28
         self.width = 28                           
-        self.modeldir = './modeldir_mnist'
-        self.logdir = './logdir_mnist'
+        self.modeldir = './modeldir_mnist_32_3'
+        self.logdir = './logdir_mnist_32_3'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
@@ -95,7 +95,7 @@ class VAE(Generator):
     
     def get_loss(self, mean, stddev, epsilon=1e-8):
         return tf.reduce_sum(0.5*(tf.square(mean)+
-            tf.square(stddev)-2.0*tf.log(stddev+epsilon)-1.0))/mean.shape.num_elements()
+            tf.square(stddev)-2.0*tf.log(stddev+epsilon)-1.0))
 
     # def get_rec_loss(self, out_put, target_out, epsilon=1e-8):
     #     return tf.reduce_sum(-target_out*tf.log(out_put+epsilon)
@@ -103,8 +103,8 @@ class VAE(Generator):
 
     def get_rec_loss(self, out_put, target_out):
         print(out_put.get_shape(),target_out.get_shape())
-           # return tf.reduce_sum(tf.squared_difference(out_put, target_out))
-        return tf.losses.mean_squared_error(out_put, target_out)
+        return tf.reduce_sum(tf.squared_difference(out_put, target_out))
+     #   return tf.losses.mean_squared_error(out_put, target_out)
 
     def save(self, step):
         print('---->saving', step)
