@@ -18,7 +18,7 @@ logging = tf.logging
 
 flags.DEFINE_integer("batch_size", 100, "batch size")
 flags.DEFINE_integer("updates_per_epoch", 1600, "number of updates per epoch")
-flags.DEFINE_integer("max_epoch", 500 , "max epoch")
+flags.DEFINE_integer("max_epoch", 2000 , "max epoch")
 flags.DEFINE_integer("max_test_epoch", 100, "max  test epoch")
 flags.DEFINE_float("learning_rate", 1e-4, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
@@ -29,7 +29,7 @@ flags.DEFINE_integer("checkpoint", 499, "number of epochs to be reloaded")
 FLAGS = flags.FLAGS
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     parser = argparse.ArgumentParser()
     parser.add_argument('--action', dest='action', type=str, default='train',
                         help='actions: train, or test')
