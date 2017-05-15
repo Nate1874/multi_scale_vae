@@ -24,12 +24,12 @@ flags.DEFINE_float("learning_rate", 1e-2, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
 flags.DEFINE_integer("hidden_size", 3, "size of the hidden VAE unit")
 flags.DEFINE_integer("channel", 32, "size of initial channel in decoder")
-flags.DEFINE_integer("checkpoint", 499, "number of epochs to be reloaded")
+flags.DEFINE_integer("checkpoint", 1999, "number of epochs to be reloaded")
 
 FLAGS = flags.FLAGS
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = '8'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '6'
     parser = argparse.ArgumentParser()
     parser.add_argument('--action', dest='action', type=str, default='train',
                         help='actions: train, or test')
