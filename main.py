@@ -12,6 +12,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 from data_reader import load_data, get_next_batch
 from celeba import celeba
 from cifar_reader import cifar_reader
+import time
 from ops import *
 flags = tf.flags
 logging = tf.logging
@@ -24,7 +25,7 @@ flags.DEFINE_float("learning_rate", 1e-4, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
 flags.DEFINE_integer("hidden_size", 3, "size of the hidden VAE unit")
 flags.DEFINE_integer("channel", 64, "size of initial channel in decoder")
-flags.DEFINE_integer("checkpoint", 499, "number of epochs to be reloaded")
+flags.DEFINE_integer("checkpoint", 1450, "number of epochs to be reloaded")
 
 FLAGS = flags.FLAGS
 
@@ -50,16 +51,22 @@ if __name__ == "__main__":
       for epoch in range(FLAGS.max_epoch): 
           training_loss = 0.0
           pbar = ProgressBar()
+          t_start= time.clock()
           for i in pbar(range(FLAGS.updates_per_epoch)):
           #    images, _ = mnist.train.next_batch(FLAGS.batch_size)
           #    images = tf.reshape(images, [FLAGS.batch_size,])
           #     images = get_next_batch(Train_set, FLAGS.batch_size)
           #     images = data.next_batch(FLAGS.batch_size)
               images = data.next_batch(FLAGS.batch_size)
+              
               loss_value, kl_loss, rec_loss = model.update_params(images, epoch*FLAGS.updates_per_epoch + i)
+
+              
               training_loss += loss_value
             #   print ("=============KL loss", kl_loss)
             #   print ("==============rec loss", rec_loss)
+          t_end = time.clock()
+          print ("training per epoch time ====== %f" %(t_end-t_start))
           model.save(epoch)
           training_loss = training_loss/ (FLAGS.updates_per_epoch * FLAGS.batch_size)
           print ("Loss %f" % training_loss)

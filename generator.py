@@ -1,10 +1,13 @@
 import os
 from scipy.misc import imsave
-
+import time
 class Generator(object):
     
     def generate_and_save_images(self, nums, directory):
+        t1= time.clock()
         imgs = self.sess.run(self.sample_out)
+        t2= time.clock()
+        print("generation time is ==== %f"%(t2-t1) )
         for k in range(imgs.shape[0]):
             imgs_folder = os.path.join(directory, 'imgs_cleleba_test_3_64_new')
             if not os.path.exists(imgs_folder):
