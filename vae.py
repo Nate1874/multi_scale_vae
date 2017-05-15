@@ -9,10 +9,10 @@ class VAE(Generator):
 
     def __init__(self, hidden_size, batch_size, learning_rate, channel):
         self.working_directory = '/tempspace/hyuan/VAE'
-        self.height = 64
-        self.width = 64                           
-        self.modeldir = './modeldir_celeba_test_1_81_tran'
-        self.logdir = './logdir_celeba_test_1_81_tran'
+        self.height = 32
+        self.width = 32                           
+        self.modeldir = './modeldir_street_tran'
+        self.logdir = './logdir_street_tran'
         self.hidden_size = hidden_size
         self.batch_size = batch_size
         self.learning_rate =learning_rate
@@ -61,9 +61,9 @@ class VAE(Generator):
         summarys.append(tf.summary.scalar('/Rec-loss', self.rec_loss))
         summarys.append(tf.summary.scalar('/loss', total_loss))
 
-        summarys.append(tf.summary.image('input', tf.reshape(input_tensor, [-1, 64, 64, 3]), max_outputs = 20))
+        summarys.append(tf.summary.image('input', tf.reshape(input_tensor, [-1, 32, 32, 3]), max_outputs = 20))
 
-        summarys.append(tf.summary.image('output', tf.reshape(out_put, [-1, 64, 64, 3]), max_outputs = 20))
+        summarys.append(tf.summary.image('output', tf.reshape(out_put, [-1, 32, 32, 3]), max_outputs = 20))
         
         self.train = tf.contrib.layers.optimize_loss(total_loss, tf.contrib.framework.get_or_create_global_step(), 
             learning_rate=self.learning_rate, optimizer='Adam', update_ops=[])
@@ -74,7 +74,7 @@ class VAE(Generator):
 
     
     def get_loss(self, mean, stddev, epsilon=1e-8):
-        return tf.reduce_mean(0.5*(tf.square(mean)+
+        return tf.reduce_sum(0.5*(tf.square(mean)+
             tf.square(stddev)-2.0*tf.log(stddev+epsilon)-1.0))
 
     # def get_rec_loss(self, out_put, target_out, epsilon=1e-8):
@@ -82,8 +82,8 @@ class VAE(Generator):
     #         -(1.0-target_out)*tf.log(1.0-out_put+epsilon))
     def get_rec_loss(self, out_put, target_out):
         print(out_put.get_shape(),target_out.get_shape())
-        return tf.losses.mean_squared_error(out_put, target_out)
-    
+  #      return tf.losses.mean_squared_error(out_put, target_out)
+        return tf.reduce_sum(tf.squared_difference(out_put, target_out))
     def save(self, step):
         print('---->saving', step)
         checkpoint_path = os.path.join(

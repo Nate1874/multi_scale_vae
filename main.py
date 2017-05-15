@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 import argparse
 import os
+import time
 import scipy.misc
 from scipy.misc import imsave
 from progressbar import ETA, Bar, Percentage, ProgressBar
@@ -12,24 +13,25 @@ from tensorflow.examples.tutorials.mnist import input_data
 from data_reader import load_data, get_next_batch
 from celeba import celeba
 from cifar_reader import cifar_reader
+from street import street
 from ops import *
 flags = tf.flags
 logging = tf.logging
 
 flags.DEFINE_integer("batch_size", 100, "batch size")
-flags.DEFINE_integer("updates_per_epoch", 1600, "number of updates per epoch")
+flags.DEFINE_integer("updates_per_epoch", 732, "number of updates per epoch")
 flags.DEFINE_integer("max_epoch", 500, "max epoch")
 flags.DEFINE_integer("max_test_epoch", 100, "max  test epoch")
-flags.DEFINE_float("learning_rate", 1e-4, "learning rate")
+flags.DEFINE_float("learning_rate", 2e-4, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
 flags.DEFINE_integer("hidden_size", 1, "size of the hidden VAE unit")
-flags.DEFINE_integer("channel", 81, "size of initial channel in decoder")
+flags.DEFINE_integer("channel", 64, "size of initial channel in decoder")
 flags.DEFINE_integer("checkpoint", 499, "number of epochs to be reloaded")
 
 FLAGS = flags.FLAGS
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = '8'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     parser = argparse.ArgumentParser()
     parser.add_argument('--action', dest='action', type=str, default='train',
                         help='actions: train, or test')
@@ -43,13 +45,15 @@ if __name__ == "__main__":
     # mnist = input_data.read_data_sets(data_directory, one_hot= True)
   #  Train_set , Test_set = load_data('freyface', FLAGS.working_directory, 0.9, 0)
     model = VAE(FLAGS.hidden_size, FLAGS.batch_size, FLAGS.learning_rate, FLAGS.channel)
-    data = celeba()
+  #  data = celeba()
+    data =street()
   #  data =cifar_reader()
  #   images = data.next_batch(FLAGS.batch_size)
     if args.action == 'train':
       for epoch in range(FLAGS.max_epoch): 
           training_loss = 0.0
           pbar = ProgressBar()
+          t_start= time.clock()
           for i in pbar(range(FLAGS.updates_per_epoch)):
           #    images, _ = mnist.train.next_batch(FLAGS.batch_size)
           #    images = tf.reshape(images, [FLAGS.batch_size,])
@@ -60,6 +64,8 @@ if __name__ == "__main__":
               training_loss += loss_value
             #   print ("=============KL loss", kl_loss)
             #   print ("==============rec loss", rec_loss)
+          t_end = time.clock()
+          print ("training per epoch time ====== %f" %(t_end-t_start))
           model.save(epoch)
           training_loss = training_loss/ (FLAGS.updates_per_epoch * FLAGS.batch_size)
           print ("Loss %f" % training_loss)
