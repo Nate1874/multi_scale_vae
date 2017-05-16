@@ -20,7 +20,7 @@ logging = tf.logging
 
 flags.DEFINE_integer("batch_size", 100, "batch size")
 flags.DEFINE_integer("updates_per_epoch", 732, "number of updates per epoch")
-flags.DEFINE_integer("max_epoch", 500, "max epoch")
+flags.DEFINE_integer("max_epoch", 2000, "max epoch")
 flags.DEFINE_integer("max_test_epoch", 100, "max  test epoch")
 flags.DEFINE_float("learning_rate", 2e-4, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
