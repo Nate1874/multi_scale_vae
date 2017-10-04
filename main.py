@@ -18,13 +18,13 @@ logging = tf.logging
 
 flags.DEFINE_integer("batch_size", 100, "batch size")
 flags.DEFINE_integer("updates_per_epoch", 550, "number of updates per epoch")
-flags.DEFINE_integer("max_epoch", 2000, "max epoch")
+flags.DEFINE_integer("max_epoch", 10000, "max epoch")
 flags.DEFINE_integer("max_test_epoch", 100, "max  test epoch")
 flags.DEFINE_float("learning_rate", 1e-2, "learning rate")
 flags.DEFINE_string("working_directory", "/tempspace/hyuan/VAE", "the file directory")
 flags.DEFINE_integer("hidden_size", 3, "size of the hidden VAE unit")
-flags.DEFINE_integer("channel", 32, "size of initial channel in decoder")
-flags.DEFINE_integer("checkpoint", 1999, "number of epochs to be reloaded")
+flags.DEFINE_integer("channel", 16, "size of initial channel in decoder")
+flags.DEFINE_integer("checkpoint", 0, "number of epochs to be reloaded")
 
 FLAGS = flags.FLAGS
 
@@ -98,5 +98,6 @@ if __name__ == "__main__":
         nlls = np.array(nlls).reshape(10000) # 10000 test images
         print("sigma: ", sigma)
         print("ll: %d" % (np.mean(nlls)))
-        print("se: %d" % (nlls.std() / np.sqrt(10000)))         
+        print("se: %d" % (nlls.std() / np.sqrt(10000)))      
+        print("Result is as aboves============================")   
     
